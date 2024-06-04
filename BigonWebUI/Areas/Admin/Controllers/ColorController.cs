@@ -1,5 +1,5 @@
-﻿using Bigon.Data;
-using Bigon.Infrastructure.Entites;
+﻿using Bigon.Infrastructure.Entites;
+using Bigon.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BigonWebUI.Areas.Admin.Controllers
@@ -7,18 +7,16 @@ namespace BigonWebUI.Areas.Admin.Controllers
     [Area("Admin")]
     public class ColorController : Controller
     {
-        private DataContext _db;
+        private readonly IColorRepository _colorRepository;
 
-        public ColorController(DataContext db)
+        public ColorController(IColorRepository colorRepository)
         {
-            _db = db;
-
+            _colorRepository = colorRepository;
         }
         public IActionResult Index()
         {
-            var colors=_db.Colors
-                .Where(c => c.DeletedBy==null)
-                .ToList();
+           
+            var colors = _colorRepository.GetAll(c => c.DeletedBy==null);
             return View(colors);
         }
 
@@ -31,15 +29,18 @@ namespace BigonWebUI.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(Color color)
         {
-           
-            _db.Colors.Add(color);
-            _db.SaveChanges();
+
+            
+            _colorRepository.Add(color);
+            _colorRepository.Save();
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int id)
         {
-            var dbColor=_db.Colors.Find(id);
+           
+
+            var dbColor = _colorRepository.Get(x => x.Id == id);
 
             if(dbColor == null) return NotFound();
 
@@ -49,22 +50,17 @@ namespace BigonWebUI.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(Color color)
         {
-            var dbColor=_db.Colors.Find(color.Id);
-
-            if(dbColor == null) return NotFound();
-
-            dbColor.Name= color.Name;
-            dbColor.HexCode= color.HexCode;
            
-
-            _db.SaveChanges();
+            _colorRepository.Edit(color);
+            _colorRepository.Save();
 
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Details(int id)
         {
-            var dbColor = _db.Colors.Find(id);
+            
+            var dbColor = _colorRepository.Get(x => x.Id == id);
 
             if (dbColor == null) return NotFound();
 
@@ -73,24 +69,15 @@ namespace BigonWebUI.Areas.Admin.Controllers
         
         public IActionResult Remove(int id)
         {
-            var dbColor = _db.Colors.Find(id);
 
-            if (dbColor == null)
-                return Json(new
-                {
-                    error=true,
-                    message = "Data Tapilmadi"
-                });
+           
+            var dbColor = _colorRepository.Get(x => x.Id == id);
+            _colorRepository.Remove(dbColor);
+            _colorRepository.Save();
 
-            _db.Colors.Remove(dbColor);
 
-         
-
-            _db.SaveChanges();
-
-            var colors=_db.Colors
-                .Where(c => c.DeletedBy==null)
-                .ToList();
+            var colors = _colorRepository.GetAll(c => c.DeletedBy == null);
+          
 
             return PartialView("_Body", colors);
         }

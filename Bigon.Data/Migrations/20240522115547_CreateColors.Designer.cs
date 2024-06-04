@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BigonWebUI.Migrations
+namespace Bigon.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20240522115547_CreateColors")]

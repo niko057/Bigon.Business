@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BigonWebUI.Migrations
+namespace Bigon.Data.Migrations
 {
     public partial class CreateTags : Migration
     {

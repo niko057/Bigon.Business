@@ -2,20 +2,19 @@
 
 #nullable disable
 
-namespace BigonWebUI.Migrations
+namespace Bigon.Data.Migrations
 {
-    public partial class CreateColors : Migration
+    public partial class CreateManufacturer : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Colors",
+                name: "Manufacturers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    HexCode = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     ModifiedBy = table.Column<int>(type: "int", nullable: true),
@@ -25,14 +24,14 @@ namespace BigonWebUI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Colors", x => x.Id);
+                    table.PrimaryKey("PK_Manufacturers", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Colors");
+                name: "Manufacturers");
         }
     }
 }

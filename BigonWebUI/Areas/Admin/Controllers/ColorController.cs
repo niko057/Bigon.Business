@@ -1,5 +1,10 @@
-﻿using Bigon.Infrastructure.Entites;
-using Bigon.Infrastructure.Repositories;
+﻿
+using Bigon.Business.Modules.ColorsModule.Commands.ColorAddCommand;
+using Bigon.Business.Modules.ColorsModule.Commands.ColorEditCommand;
+using Bigon.Business.Modules.ColorsModule.Commands.ColorRemoveCommand;
+using Bigon.Business.Modules.ColorsModule.Queries.ColorGetAllQuery;
+using Bigon.Business.Modules.ColorsModule.Queries.ColorGetByIdQuery;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BigonWebUI.Areas.Admin.Controllers
@@ -7,79 +12,66 @@ namespace BigonWebUI.Areas.Admin.Controllers
     [Area("Admin")]
     public class ColorController : Controller
     {
-        private readonly IColorRepository _colorRepository;
+        private readonly IMediator _mediator;
 
-        public ColorController(IColorRepository colorRepository)
+        public ColorController(IMediator mediator)
         {
-            _colorRepository = colorRepository;
+            _mediator = mediator;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(ColorGetAllRequest request)
         {
-           
-            var colors = _colorRepository.GetAll(c => c.DeletedBy==null);
-            return View(colors);
+
+            var response = await _mediator.Send(request);
+            return View(response);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            
+
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Color color)
+        public async Task<IActionResult> Create(ColorAddRequest request)
         {
+            await _mediator.Send(request);
 
-            
-            _colorRepository.Add(color);
-            _colorRepository.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(ColorGetByIdRequest request)
         {
-           
-
-            var dbColor = _colorRepository.Get(x => x.Id == id);
-
-            if(dbColor == null) return NotFound();
-
-            return View(dbColor);
+            var response = await _mediator.Send(request);
+            return View(response);
         }
 
         [HttpPost]
-        public IActionResult Edit(Color color)
+        public async Task<IActionResult> Edit(ColorEditRequest request)
         {
-           
-            _colorRepository.Edit(color);
-            _colorRepository.Save();
-
+            await _mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(ColorGetByIdRequest request)
         {
-            
-            var dbColor = _colorRepository.Get(x => x.Id == id);
+            var response = await _mediator.Send(request);
+            return View(response);
+        }
 
-            if (dbColor == null) return NotFound();
-
-            return View(dbColor);
-        }   
-        
-        public IActionResult Remove(int id)
+        public async Task<IActionResult> Remove(ColorRemoveRequest request)
         {
 
-           
-            var dbColor = _colorRepository.Get(x => x.Id == id);
-            _colorRepository.Remove(dbColor);
-            _colorRepository.Save();
+
+            await _mediator.Send(request);
+
+            return Json(new
+            {
+                error = false,
+                message = "Qeyd silindi!"
+            });
 
 
-            var colors = _colorRepository.GetAll(c => c.DeletedBy == null);
-          
-
-            return PartialView("_Body", colors);
+            return PartialView("_Body", request);
         }
 
 

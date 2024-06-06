@@ -47,11 +47,19 @@ namespace Bigon.Data
                         case EntityState.Modified:
                             entity.Entity.ModifiedBy = _identityService.GetPrincicipialId() ;
                             entity.Entity.ModifiedAt = _dateTimeServive.ExecutingTime;
+
+                            entity.Property(m => m.CreatedBy).IsModified = false;
+                            entity.Property(m => m.CreatedAt).IsModified = false;
                             break;
                         case EntityState.Deleted:
                             entity.State = EntityState.Modified;
                             entity.Entity.DeletedBy = _identityService.GetPrincicipialId();
                             entity.Entity.DeletedAt = _dateTimeServive.ExecutingTime;
+
+                            entity.Property(m => m.CreatedBy).IsModified = false;
+                            entity.Property(m => m.CreatedAt).IsModified = false;
+                            entity.Property(m => m.ModifiedBy).IsModified = false;
+                            entity.Property(m => m.ModifiedAt).IsModified = false;
                             break;
 
 

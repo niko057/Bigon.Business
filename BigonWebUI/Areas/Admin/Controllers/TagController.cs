@@ -1,7 +1,9 @@
-﻿using Bigon.Data;
-using Bigon.Data.Repositories;
-using Bigon.Infrastructure.Entites;
-using Bigon.Infrastructure.Repositories;
+﻿using Bigon.Business.Modules.TagsModule.Commands.TagAddCommand;
+using Bigon.Business.Modules.TagsModule.Commands.TagEditCommand;
+using Bigon.Business.Modules.TagsModule.Commands.TagRemoveCommand;
+using Bigon.Business.Modules.TagsModule.Queries.TagGetAllQuery;
+using Bigon.Business.Modules.TagsModule.Queries.TagGetByIdQuery;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BigonWebUI.Areas.Admin.Controllers
@@ -9,70 +11,68 @@ namespace BigonWebUI.Areas.Admin.Controllers
     [Area("Admin")]
     public class TagController : Controller
     {
-        private readonly ITagRepository _tagRepository;
-
-        public TagController(ITagRepository tagRepository)
+        private readonly IMediator mediator;
+        public TagController(IMediator mediator)
         {
-            _tagRepository = tagRepository;
+            this.mediator = mediator;
         }
-        public IActionResult Index()
-        {
 
-            var tags = _tagRepository.GetAll(c => c.DeletedBy == null);
-            return View(tags);
+
+        public async Task<IActionResult> Index(TagGetAllRequest request)
+        {
+            var response = await mediator.Send(request);
+            return View(response);
         }
+
+
+        public async Task<IActionResult> Details(TagGetByIdRequest request)
+        {
+            var response = await mediator.Send(request);
+            return View(response);
+        }
+
 
         public IActionResult Create()
         {
-
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Tag tag)
-        {
 
-            _tagRepository.Add(tag);
-            _tagRepository.Save();
+        public async Task<IActionResult> Create(TagAddRequest model)
+        {
+            await mediator.Send(model);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int id)
+
+        public async Task<IActionResult> Edit(TagGetByIdRequest request)
         {
-            var dbTag = _tagRepository.Get(x => x.Id == id);
-
-            if (dbTag == null) return NotFound();
-
-            return View(dbTag);
+            var response = await mediator.Send(request);
+            return View(response);
         }
 
         [HttpPost]
-        public IActionResult Edit(Tag tag)
-        {
-            _tagRepository.Add(tag);
-            _tagRepository.Save();
 
+        public async Task<IActionResult> Edit(TagEditRequest request)
+        {
+            await mediator.Send(request);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int id)
+
+
+        [HttpPost]
+
+        public async Task<IActionResult> Delete(TagRemoveRequest request)
         {
-            var dbTag = _tagRepository.Get(x => x.Id == id);
+            await mediator.Send(request);
 
-            if (dbTag == null) return NotFound();
 
-            return View(dbTag);
-        }
+            var response = await mediator.Send(new TagGetAllRequest());
 
-        public IActionResult Remove(int id)
-        {
-            var dbTag = _tagRepository.Get(x => x.Id == id);
-            _tagRepository.Remove(dbTag);
-            _tagRepository.Save();
 
-            var tags = _tagRepository.GetAll(c => c.DeletedBy == null);
-
-            return PartialView("_Body", tags);
+            return PartialView("_Body", response);
         }
     }
 }

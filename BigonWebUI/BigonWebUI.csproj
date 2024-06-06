@@ -94,6 +94,7 @@
 
   <ItemGroup>
     <PackageReference Include="DevExpress.Data" Version="23.2.6" />
+    <PackageReference Include="MediatR" Version="12.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.30" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.30">
       <PrivateAssets>all</PrivateAssets>
@@ -211,7 +212,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bigon.Data\Bigon.Data.csproj" />
+    <ProjectReference Include="..\Bigon.Business\Bigon.Business.csproj" />
     <ProjectReference Include="..\Bigon.Infrastructure\Bigon.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -12,9 +12,9 @@ namespace Bigon.Infrastructure.Commons.Concretes
         private readonly DbContext _db;
         private readonly DbSet<T> _table;
 
-        public Repository(DbContext _db)
+        public Repository(DbContext db)
         {
-            _db = _db;
+            _db = db;
             _table = _db.Set<T>();
         }
 
@@ -28,6 +28,7 @@ namespace Bigon.Infrastructure.Commons.Concretes
 
         public T Edit(T model)
         {
+            _db.Entry(model).State = EntityState.Modified;
             return model;
         }
 
@@ -41,17 +42,20 @@ namespace Bigon.Infrastructure.Commons.Concretes
             var model = _table.FirstOrDefault(predicate);
             return model;
 
-           
+
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> predicate = null)
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate = null, bool tracking = true)
         {
-           if(predicate!= null)
-            {
-                return _table.Where(predicate).ToList();
-            }
+            var query = _table.AsQueryable();
 
-            return _table.ToList();
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            if (predicate is not null)
+                query = query.Where(predicate);
+
+            return query;
         }
 
         public void Remove(T model)

@@ -1,3 +1,4 @@
+using Bigon.Business;
 using Bigon.Data;
 using Bigon.Infrastructure.Commons;
 using Bigon.Infrastructure.Services.Abstracts;
@@ -28,6 +29,11 @@ namespace BigonWebUI
             builder.Services.AddSingleton<IDateTimeServive, DateTimeServive>();
 
             builder.Services.AddScoped<IIdentityService, IdentityService>();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(IBusinessReferance).Assembly);
+            });
 
             var app = builder.Build();
 

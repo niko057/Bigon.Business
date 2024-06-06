@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bigon.Data\Bigon.Data.csproj" />
+    <ProjectReference Include="..\Bigon.Infrastructure\Bigon.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

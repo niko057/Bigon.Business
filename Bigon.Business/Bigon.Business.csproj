@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Bigon.Infrastructure\Bigon.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\BlogPostModule\Queries\" />
+  </ItemGroup>
+
 </Project>

@@ -72,9 +72,7 @@ namespace Bigon.Data
             return base.SaveChanges();
         }
 
-        public DbSet<Color> Colors { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Manufacturer> Manufacturers { get; set; }
+       
         public DbSet<Subscriber> Subscribers { get; set; }
 
 
